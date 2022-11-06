@@ -7,7 +7,7 @@ const updateTestDetails = require("./routes/updateTestDetails");
 const fetchTestIds = require("./routes/fetchTestIds");
 const submission = require("./routes/submission");
 
-require('../app/connection/db');
+require('./connection/db');
 const app = express();
 app.use(express.json());
 
