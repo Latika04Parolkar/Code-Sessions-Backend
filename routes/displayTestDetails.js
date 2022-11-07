@@ -25,6 +25,7 @@ router.post("/displayTestDetails", userCheck, async (req, res) => {
                 const check = await TestDetails.exists({ testId });
                 if (check) {
                     const testDetails = await TestDetails.findOne({ testId }, "-_id -createdAt -updatedAt -__v").lean();
+                    testDetails.testDuration = (testDetails.testDuration) / (60*60*1000);
                     testDetails.aptitude = testDetails.aptitude.length;
                     testDetails.coding = testDetails.coding.length;
                     res.status(200).send({

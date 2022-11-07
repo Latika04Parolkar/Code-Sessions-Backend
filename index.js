@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const teacherSignup = require("./routes/teacherSignup");
 const studentLogin = require("./routes/studentLogin");
 const addTestDetails = require("./routes/addTestDetails");
@@ -10,6 +11,8 @@ const submission = require("./routes/submission");
 require('./connection/db');
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
+app.use(cors);
 
 app.use(teacherSignup);
 app.use(studentLogin);
