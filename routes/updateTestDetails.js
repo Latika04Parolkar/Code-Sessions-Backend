@@ -24,7 +24,7 @@ router.post("/updateTestDetails", userCheck, async (req, res) => {
             ) {
                 const testId = req.body.testId;
                 const testDate = req.body.testDate;
-                const action = req.body.delete;
+                const action = req.body.action;
                 const testDuration = parseInt(req.body.testDuration) * 60 * 60 * 1000;
                 const test = await TestDetails.findOne({ testId }, "testDate").lean();
                 const d = (new Date(test.testDate)).getTime();
