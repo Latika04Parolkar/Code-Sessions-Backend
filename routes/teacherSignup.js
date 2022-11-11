@@ -53,7 +53,8 @@ router.post("/addTeacher", userCheck, async (req, res) => {
                         status: "Success",
                         message: "Teacher Added",
                         id: users._id,
-                        emailID
+                        emailID,
+                        fullName
                     })
                 } else throw new Error("Check Your Password!");
             }
@@ -98,7 +99,8 @@ router.post("/teacherLogin", async (req, res) => {
                         id: user._id,
                         jwt : token,
                         emailID,
-                        role : user.role
+                        role : user.role,
+                        name : user.fullName
                     })
                 } else throw new Error("Email OR Password does not match!")
             } else throw new Error("user does not exist!");

@@ -28,15 +28,17 @@ router.post("/updateTestDetails", userCheck, async (req, res) => {
                 const testDuration = parseInt(req.body.testDuration) * 60 * 60 * 1000;
                 const test = await TestDetails.findOne({ testId }, "testDate").lean();
                 const d = (new Date(test.testDate)).getTime();
-                if(action === 'update'){
-                    if( d > Date.now()){
+                if (action === 'update') {
+                    if (d > Date.now()) {
                         await TestDetails.updateOne({ testId }, {
                             testDate,
                             testDuration
                         })
                     } else throw new Error("Please enter correct date!")
-                } else if(action === 'delete'){
-                    await TestDetails.findOneAndDelete({ testId});
+                } else if (action === 'delete') {
+                    await TestDetails.findOneAndDelete({ testId });
+                    await Aptitude.deleteMany({ testId });
+                    await Coding.deleteMany({ testId });
                 }
                 res.status(200).send({
                     code: 200,
@@ -71,26 +73,33 @@ router.post("/updateAptituteQuestions", userCheck, async (req, res) => {
                 const { testId, aptitudeID, action, question, options, answer } = req.body;
                 const test = await TestDetails.findOne({ testId }, "testDate").lean();
                 const d = (new Date(test.testDate)).getTime();
-
-                if (action === 'update' && d > Date.now() && (
-                    req.body.question ||
-                    req.body.options ||
-                    req.body.answer
+                if (d > Date.now()) {
+                    if (action === 'update' && (
+                        req.body.question ||
+                        req.body.options ||
+                        req.body.answer
                     )) {
-                    await Aptitude.findByIdAndUpdate( {_id : aptitudeID}, {
-                        question,
-                        options,
-                        answer
-                    })
-                    res.status(200).send({
-                        code: 200,
-                        status: "Success",
-                        message: "Action done on Aptitude Question Successfully!",
-                        testId,
-                        aptitudeID
-                    })
-                } else if (action === 'delete' && d > Date.now()) {
-                    await Aptitude.findByIdAndDelete({ _id : aptitudeID })
+                        await Aptitude.findByIdAndUpdate({ _id: aptitudeID }, {
+                            question,
+                            options,
+                            answer
+                        })
+                        res.status(200).send({
+                            code: 200,
+                            status: "Success",
+                            message: "Action done on Aptitude Question Successfully!",
+                            testId,
+                            aptitudeID
+                        })
+                    } else if (action === 'delete') {
+                        await Aptitude.findByIdAndDelete({ _id: aptitudeID });
+                        await TestDetails.updateOne({ testId }, {
+                            $pull: {
+                                aptitude: aptitudeID
+                            }
+                        })
+                    } else throw new Error("Date expired!")
+
                     res.status(200).send({
                         code: 200,
                         status: "Success",
@@ -125,21 +134,28 @@ router.post("/updateCodingProblems", userCheck, async (req, res) => {
                 const { testId, codingID, question, action, constraints, sampleTestCases, hiddenTestCases } = req.body;
                 const test = await TestDetails.findOne({ testId }, "testDate");
                 const d = (new Date(test.testDate)).getTime();
-                if (action === 'update' && d > Date.now() && (
-                    req.body.question ||
-                    req.body.constraints ||
-                    req.body.sampleTestCases ||
-                    req.body.hiddenTestCases
-                )) {
-                    await Coding.findByIdAndUpdate({ _id : codingID}, {
-                        question,
-                        constraints,
-                        sampleTestCases,
-                        hiddenTestCases
-                    })
-                } else if (action === 'delete' && d > Date.now()) {
-                    await Coding.findByIdAndDelete({ _id : codingID});
-                }
+                if (d > Date.now()) {
+                    if (action === 'update' && (
+                        req.body.question ||
+                        req.body.constraints ||
+                        req.body.sampleTestCases ||
+                        req.body.hiddenTestCases
+                    )) {
+                        await Coding.findByIdAndUpdate({ _id: codingID }, {
+                            question,
+                            constraints,
+                            sampleTestCases,
+                            hiddenTestCases
+                        })
+                    } else if (action === 'delete') {
+                        await Coding.findByIdAndDelete({ _id: codingID });
+                        await TestDetails.updateOne({ testId }, {
+                            $pull: {
+                                coding: codingID
+                            }
+                        })
+                    }
+                } else throw new Error("Date expired!")
                 res.status(200).send({
                     code: 200,
                     status: "Success",
