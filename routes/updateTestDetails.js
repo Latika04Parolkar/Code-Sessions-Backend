@@ -28,14 +28,15 @@ router.post("/updateTestDetails", userCheck, async (req, res) => {
                 const testDuration = parseInt(req.body.testDuration) * 60 * 60 * 1000;
                 const test = await TestDetails.findOne({ testId }, "testDate").lean();
                 const d = (new Date(test.testDate)).getTime();
-                if (action === 'update') {
-                    if (d > Date.now()) {
+                if (d > Date.now()) {
+                    if (action === 'update') {
                         await TestDetails.updateOne({ testId }, {
                             testDate,
                             testDuration
                         })
-                    } else throw new Error("Please enter correct date!")
-                } else if (action === 'delete') {
+                    }
+                } else throw new Error("Please enter correct date!")
+                if (action === 'delete') {
                     await TestDetails.findOneAndDelete({ testId });
                     await Aptitude.deleteMany({ testId });
                     await Coding.deleteMany({ testId });

@@ -88,7 +88,7 @@ router.post("/teacherLogin", async (req, res) => {
             const check = await Users.findOne({ emailID });
 
             if (check) {
-                const user = await Users.findOne({ emailID }, "password role enrollmentNo" );
+                const user = await Users.findOne({ emailID }, " fullName password role enrollmentNo" );
                 const matchPwd = await bcrypt.compare(password, user.password);
                 if (matchPwd) {
                     const token = generateAuthToken(emailID, user.role, user.enrollmentNo);
