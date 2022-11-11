@@ -86,7 +86,7 @@ router.post("/checkHiddenTestCases", userCheck, async (req, res) => {
                 let answer = false;
                 for (const hiddenTestCase of hiddenTestCases) {
                     const input = hiddenTestCase.input;
-                    const { data: { jobId } } = await axios.post("http://localhost:4000/run", {
+                    const { data: { jobId } } = await axios.post("https://compiler-backend.onrender.com/run", {
                         language,
                         code,
                         input
@@ -97,7 +97,7 @@ router.post("/checkHiddenTestCases", userCheck, async (req, res) => {
                         return new Promise((resolve, reject) => {
                             intervalId = setInterval(async () => {
                                 const { data: dataRes } = await axios.get(
-                                    "http://localhost:4000/status",
+                                    "https://compiler-backend.onrender.com/status",
                                     { params: { id: jobId } }
                                 );
                                 const { success, job, error } = dataRes;
