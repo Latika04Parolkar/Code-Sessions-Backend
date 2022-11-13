@@ -27,7 +27,7 @@ router.get('/auth/google',
 );
 
 router.get('/google/callback',
-    passport.authenticate('google', { scope: ['email', 'profile'] },
+    passport.authenticate('google',
         { failureRedirect: '/auth/failure', session: false }), async (req, res) => {
             let isValid;
             const emailID = req.user.email;
