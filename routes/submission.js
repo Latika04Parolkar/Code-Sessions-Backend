@@ -70,7 +70,7 @@ router.post("/calculateAptitudeScore", userCheck, async (req, res) => {
         });
     }
 })
-
+// https://compiler-backend.onrender.com
 router.post("/checkHiddenTestCases", userCheck, async (req, res) => {
     try {
         if (req.userData.role === "student") {
@@ -86,18 +86,20 @@ router.post("/checkHiddenTestCases", userCheck, async (req, res) => {
                 let answer = false;
                 for (const hiddenTestCase of hiddenTestCases) {
                     const input = hiddenTestCase.input;
-                    const { data: { jobId } } = await axios.post("https://compiler-backend.onrender.com/run", {
+                    const { data: { jobId } } = await axios.post("http://localhost:4000/run", {
                         language,
                         code,
                         input
                     })
+                    console.log(jobId);
                     let output;
                     let intervalId;
+                    console.log(output);
                     const asyncInterval = async () => {
                         return new Promise((resolve, reject) => {
                             intervalId = setInterval(async () => {
                                 const { data: dataRes } = await axios.get(
-                                    "https://compiler-backend.onrender.com/status",
+                                    "http://localhost:4000/status",
                                     { params: { id: jobId } }
                                 );
                                 const { success, job, error } = dataRes;
@@ -116,9 +118,11 @@ router.post("/checkHiddenTestCases", userCheck, async (req, res) => {
                         })
                     }
                     output = await asyncInterval();
+                    console.log(output);
                     if (output.trim() == hiddenTestCase.output) {
                         testCasesPassed += 1;
                     }
+                    console.log(output);
                 }
                 if(testCasesPassed === hiddenTestCases.length){
                    answer = true;
