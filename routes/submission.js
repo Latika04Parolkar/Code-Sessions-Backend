@@ -184,9 +184,10 @@ router.post("/showCurrentTestResult", userCheck, async (req, res) => {
                 const test = await TestDetails.findOne( { testId }, "-_id aptitude coding");
                 const  aptitudeMarks = studentResult.aptitudeScore.filter(obj => obj.answer === true).length;
                 const codingResult = studentResult.codingResult.filter(obj => obj.answer === true).length;
-                const check = await TestHistory.exists( {testId} );
+                const check = await TestHistory.exists( {testId, studentId} );
                 if(check){
                     const testHistory = await TestHistory.findOne({studentId});
+                    console.log(test);
                     testHistory.tests.push({
                         testId,
                         totalAptitude : test.aptitude.length,

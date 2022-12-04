@@ -16,7 +16,7 @@ app.use(router);
 const generateAuthToken = (email, role, id) => {
     //const _id = id.toString()
     const token = jwt.sign({ email, role, id }, "thisissoconfusing", {
-        expiresIn: "3.5h",
+        expiresIn: "7d",
     });
     return token;
 };
